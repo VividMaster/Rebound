@@ -7,7 +7,7 @@ using IrrKlang;
 
 namespace StarEngine.Sound
 {
-    public static class VSoundSys
+    public static class StarSoundSys
     {
         static ISoundEngine SE;
         public static void Init()
@@ -47,7 +47,7 @@ namespace StarEngine.Sound
         public VSound(ISound s)
         {
             Src = s;
-            VSoundSys.SL.Add(this);
+            StarSoundSys.SL.Add(this);
         }
         ~VSound()
         {
@@ -83,12 +83,12 @@ namespace StarEngine.Sound
         public ISoundSource Src;
         public VSoundSource(string p)
         {
-            Src = VSoundSys.LoadSound(p);
-            VSoundSys.SSL.Add(this);
+            Src = StarSoundSys.LoadSound(p);
+            StarSoundSys.SSL.Add(this);
         }
         public VSound Play2D(bool loop=false)
         {
-            return VSoundSys.Play2D(Src, loop);
+            return StarSoundSys.Play2D(Src, loop);
 
         }
     }

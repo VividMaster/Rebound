@@ -138,6 +138,7 @@ namespace StarEngine.App
             RW = width;
             RH = height;
             Import.Import.RegDefaults();
+            VPen.InitDraw();
    
         }
         protected override void OnMouseDown(MouseButtonEventArgs e)
@@ -245,6 +246,7 @@ namespace StarEngine.App
             {
                 var us = States.Peek();
                 us.UpdateState();
+                us.InternalUpdate();
             }
         }
         public int fpsL=0, fps=0, frames=0;

@@ -16,7 +16,7 @@ namespace ReboundGame
 
             var game = new ReboundApp(800, 600, false);
 
-            game.Run();
+            game.Run(60, 60);
 
         }
     }

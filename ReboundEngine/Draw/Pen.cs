@@ -13,7 +13,7 @@ namespace StarEngine.Draw
 {
     public class VEQuad : Effect3D
     {
-        public VEQuad() : base("", "drawVS.txt", "drawFS.txt")
+        public VEQuad() : base("", "Data\\Shader\\drawVS.txt", "Data\\Shader\\drawFS.txt")
         {
 
         }
