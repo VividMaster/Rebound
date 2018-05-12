@@ -13,7 +13,7 @@ using StarEngine.Scene;
 using StarEngine.Tex;
 using StarEngine.Util;
 using StarEngine.VFX;
-
+using StarEngine.Sound;
 using StarEngine.Reflect;
 using System.Reflection;
 using StarEngine.Archive;
@@ -62,11 +62,14 @@ namespace ReboundGame.States
                 return false;
             }
 
+            bool logoDone = false;
+        
             bool AlphaDown()
             {
                 LogoAlpha -= 0.02f;
                 if (LogoAlpha < 0.0f)
                 {
+                    logoDone = true;
                     LogoAlpha = 0.0f;
                     return true;
                 }
@@ -76,6 +79,23 @@ namespace ReboundGame.States
             Flow(null,AlphaUp);
             Flow(WaitInit, WaitABit);
             Flow(null, AlphaDown);
+
+            var ms = StarSoundSys.Play2DFile("Data\\Music\\Logo\\LogoTheme1.mp3");
+
+            bool StopMusic()
+            {
+                return logoDone;
+            }
+
+            void NextState()
+            {
+                ms.Stop();
+                Console.WriteLine("NextState");
+            }
+
+            When(StopMusic, NextState);
+
+
         }
 
         public override void UpdateState()

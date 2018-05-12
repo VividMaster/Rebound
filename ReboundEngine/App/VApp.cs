@@ -139,6 +139,7 @@ namespace StarEngine.App
             RH = height;
             Import.Import.RegDefaults();
             VPen.InitDraw();
+            StarEngine.Sound.StarSoundSys.Init();
    
         }
         protected override void OnMouseDown(MouseButtonEventArgs e)
