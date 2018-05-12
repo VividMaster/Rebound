@@ -60,6 +60,7 @@
     <Compile Include="Archive\VirtualFileSystem.cs" />
     <Compile Include="Archive\ZLib.cs" />
     <Compile Include="Cam\VCam.cs" />
+    <Compile Include="Casuality\Causealit.cs" />
     <Compile Include="Class1.cs" />
     <Compile Include="Data\VInfoMap.cs" />
     <Compile Include="Data\VMesh.cs" />

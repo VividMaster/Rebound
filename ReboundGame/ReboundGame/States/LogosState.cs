@@ -76,13 +76,13 @@ namespace ReboundGame.States
                 return false;
             }
 
-            Flow(null,AlphaUp);
-            Flow(WaitInit, WaitABit);
-            Flow(null, AlphaDown);
+            Cause.Flow(null,AlphaUp);
+            Cause.Flow(WaitInit, WaitABit);
+            Cause.Flow(null, AlphaDown);
 
-            var ms = StarSoundSys.Play2DFile("Data\\Music\\Logo\\LogoTheme1.mp3");
+            var ms = StarSoundSys.Play2DFile("Data\\Music\\Logo\\LogoTheme1.wav");
 
-            bool StopMusic()
+            bool StateDone()
             {
                 return logoDone;
             }
@@ -93,7 +93,12 @@ namespace ReboundGame.States
                 Console.WriteLine("NextState");
             }
 
-            When(StopMusic, NextState);
+            bool UnlessMusic()
+            {
+                return ms.Playing;
+            }
+
+            Cause.When(StateDone, NextState,UnlessMusic);
 
 
         }
@@ -101,6 +106,7 @@ namespace ReboundGame.States
         public override void UpdateState()
         {
             return;
+            /*
             switch (LS)
             {
                 case 0:
@@ -143,7 +149,7 @@ namespace ReboundGame.States
 
                     break;
             }
-            
+            */
         }
 
         public override void DrawState()
