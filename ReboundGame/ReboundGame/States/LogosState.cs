@@ -23,6 +23,7 @@ using StarEngine.Import;
 using StarEngine.Material;
 using StarEngine.State;
 using StarEngine.Texture;
+using StarEngine.Logic;
 namespace ReboundGame.States
 {
     public class LogosState : StarState
@@ -75,6 +76,13 @@ namespace ReboundGame.States
                 }
                 return false;
             }
+
+            void TestDo()
+            {
+
+            }
+
+            Cause.Do(TestDo);
 
             Cause.Flow(null,AlphaUp);
             Cause.Flow(WaitInit, WaitABit);

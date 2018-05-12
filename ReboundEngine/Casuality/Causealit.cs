@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-namespace StarEngine.Casuality
+using System.Threading;
+namespace StarEngine.Logic
 {
     public delegate void Act();
     public delegate bool Until();
@@ -12,8 +12,37 @@ namespace StarEngine.Casuality
     public delegate bool FlowLogic();
     public delegate bool When();
     public delegate bool Unless();
-    public class Causeality
+    public class Logics
     {
+        public int inter;
+        public Thread UpdateThread = null;
+        public Logics(int interval = 1000/60)
+        {
+            inter = interval;
+            UpdateThread = new Thread(new ThreadStart(Thread_Update));
+            UpdateThread.Priority = ThreadPriority.Normal;
+            UpdateThread.Start();
+        }
+        public Mutex upmut = new Mutex();
+
+        public void Thread_Update()
+        {
+            int last = Environment.TickCount;
+            int next = last;
+            while (true)
+            {
+                int ct = Environment.TickCount;
+                if (ct >= next)
+                {
+                    
+                    InternalUpdate();
+                    next = ct + inter;
+                }
+                Thread.Sleep(2);
+            }
+
+        }
+
         public virtual void In(Act Action, Until Until)
         {
             var ai = new ActInfo();
@@ -50,6 +79,23 @@ namespace StarEngine.Casuality
         }
         public void InternalUpdate()
         {
+            upmut.WaitOne();
+            var rd = new List<DoInfo>();
+            foreach(var Do in Dos)
+            {
+                Do.Do();
+                if (Do.Until != null)
+                {
+                    if (Do.Until())
+                    {
+                        rd.Add(Do);
+                    }
+                }
+            }
+            foreach(var Do in rd)
+            {
+                Dos.Remove(Do);
+            }
             var rw = new List<WhenInfo>();
             foreach (var w in Whens)
             {
@@ -157,6 +203,7 @@ namespace StarEngine.Casuality
             {
                 Acts.Remove(a);
             }
+            upmut.ReleaseMutex();
         }
         public void When(When when, Act action, Unless unless = null)
         {
@@ -166,7 +213,14 @@ namespace StarEngine.Casuality
             wi.Unless = unless;
             Whens.Add(wi);
         }
-
+        public void Do(Act action,Until until=null)
+        {
+            var di = new DoInfo();
+            di.Do = action;
+            di.Until = until;
+            Dos.Add(di);
+        }
+        public List<DoInfo> Dos = new List<DoInfo>();
         public List<FlowInfo> Flows = new List<FlowInfo>();
         private List<ActInfo> Acts = new List<ActInfo>();
         public List<WhenInfo> Whens = new List<WhenInfo>();
@@ -178,6 +232,11 @@ namespace StarEngine.Casuality
         public FlowLogic Logic;
         public FlowLogic EndLogic = null;
         public bool Begun = false;
+    }
+    public class DoInfo
+    {
+        public Act Do = null;
+        public Until Until = null;
     }
     public class ActInfo
     {

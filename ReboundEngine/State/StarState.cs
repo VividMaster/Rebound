@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using StarEngine.Casuality;
+using StarEngine.Logic;
 namespace StarEngine.State
 {
 
     public class StarState
     {
 
-        public Casuality.Causeality Cause = new Causeality();
+        public Logic.Logics Cause = new Logics();
 
         public string Name
         {
@@ -62,7 +62,7 @@ namespace StarEngine.State
 
         public void InternalUpdate()
         {
-            Cause.InternalUpdate();
+          //  Cause.InternalUpdate();
         }
 
 
