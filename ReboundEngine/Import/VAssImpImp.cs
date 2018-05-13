@@ -14,6 +14,7 @@ namespace StarEngine.Import
     public class AssImpImport : Importer
     {
         public static string IPath = "";
+
         public override GraphNode3D LoadNode(string path)
         {
             GraphEntity3D root = new GraphEntity3D();
@@ -57,11 +58,22 @@ namespace StarEngine.Import
                     
                     t1 = mat.GetMaterialTextures(TextureType.Diffuse)[0];
 
-                   
-                    if(t1.FilePath!=null)
+
+                    if (t1.FilePath != null)
                     {
-                        vm.TCol = new Tex.Tex2D(IPath+t1.FilePath,false);
-                        Console.WriteLine("TexLoaded");
+                        try
+                        {
+                            vm.TCol = new Tex.Tex2D(IPath + t1.FilePath, false);
+                            if (File.Exists(IPath + "norm" + t1.FilePath))
+                            {
+                                vm.TNorm = new Tex.Tex2D(IPath + "norm" + t1.FilePath, false);
+                                Console.WriteLine("TexLoaded");
+                            }
+                        }
+                        catch
+                        {
+
+                        }
                     }
                         if (true)
                     {

@@ -6,17 +6,26 @@ using System.Threading.Tasks;
 using StarEngine.Texture;
 using StarEngine.Draw;
 using OpenTK;
+using StarEngine.Logic;
+using StarEngine.Font;
 namespace StarEngine.Resonance
 {
     public delegate void Draw();
     public delegate void Update();
     public delegate void MouseEnter();
     public delegate void MouseLeave();
-    public delegate void MouseMove();
+    public delegate void MouseMove(int x,int y,int mx,int my);
+    public delegate void MouseDown(int but);
+    public delegate void MouseUp(int but);
+    public delegate void MousePressed(int but);
     public delegate void FormLogic();
-
+    public delegate void Click(int b);
+    public delegate void Drag(int x, int y);
     public class UIForm
     {
+
+        public Logics Logics = new Logics();
+        public Logics Graphics = new Logics();
 
         public Vector4 Col = new Vector4(1, 1, 1, 0.7f);
 
@@ -25,7 +34,12 @@ namespace StarEngine.Resonance
         public MouseEnter MouseEnter = null;
         public MouseLeave MouseLeave = null;
         public MouseMove MouseMove = null;
+        public MouseDown MouseDown = null;
+        public MouseUp MouseUp = null;
+        public MousePressed MousePressed = null;
         public FormLogic FormLogic = null;
+        public Click Click = null;
+        public Drag Drag = null;
 
         public VTex2D CoreTex = null;
 
@@ -35,6 +49,12 @@ namespace StarEngine.Resonance
 
         public UIForm Root = null;
         public List<UIForm> Forms = new List<UIForm>();
+
+        public UIForm Add(UIForm form)
+        {
+            Forms.Add(form);
+            return form;
+        }
 
         public int GX
         {
@@ -64,12 +84,30 @@ namespace StarEngine.Resonance
             }
         }
 
-        public void DrawForm(VTex2D tex)
+        public bool InBounds(int x,int y)
+        {
+
+            if(x>=GX && y>=GY && x<=(GX+W) && y <= (GY + H))
+            {
+                return true;
+            }
+            return false;
+
+        }
+
+        public void DrawForm(VTex2D tex, int x = 0, int y = 0)
         {
 
             VPen.BlendMod = VBlend.Alpha;
             
-            VPen.Rect(GX, GY, W, H, CoreTex, Col);
+            VPen.Rect(GX+x, GY+y, W, H, CoreTex, Col);
+
+        }
+
+        public void DrawText(string txt,int x,int y)
+        {
+
+            VFontRenderer.Draw(UI.Font, txt, GX+x, GY+y);
 
         }
 
@@ -90,23 +128,5 @@ namespace StarEngine.Resonance
         }
     }
 
-    public class ImageForm : UIForm
-    {
-
-        public ImageForm()
-        {
-
-            CoreTex = new VTex2D("Data\\UI\\Skin\\windowbg.png", LoadMethod.Single, true);
-
-            void DrawFunc()
-            {
-                DrawForm(CoreTex);
-            }
-
-            Draw = DrawFunc;
-
-        }
-
-    }
 
 }

@@ -3,10 +3,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
-namespace ReboundEngine.Resonance.Forms
+using StarEngine.Resonance;
+using StarEngine.Texture;
+namespace StarEngine.Resonance.Forms
 {
-    class ImageForm
+
+    public class ImageForm : UIForm
     {
+
+        public ImageForm()
+        {
+
+            
+            void DrawFunc()
+            {
+                DrawForm(CoreTex);
+            }
+
+            Draw = DrawFunc;
+
+        }
+
     }
 }

@@ -188,6 +188,11 @@ namespace StarEngine.App
                 VInput.MDX = ms.X - lm.X;
                 VInput.MDY = ms.Y - lm.Y;
             }
+            else
+            {
+                VInput.MDX = 0;
+                VInput.MDY = 0;
+            }
             lm = ms;
 
         }

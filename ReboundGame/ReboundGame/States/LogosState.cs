@@ -37,6 +37,7 @@ namespace ReboundGame.States
         public StarEngine.Sound.VSound ms;
         public override void InitState()
         {
+
             Console.WriteLine("Loading logo tex.");
             LogoTex = new StarEngine.Texture.VTex2D("Data\\2D\\Logo\\DarkArtLogo.png", LoadMethod.Single);
             PresTex = new VTex2D("Data\\2D\\Logo\\Presents.png", LoadMethod.Single);

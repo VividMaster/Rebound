@@ -7,8 +7,8 @@
     <ProjectGuid>{BAD0189B-1671-4B40-83FF-C15C622C2609}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ReboundEngine</RootNamespace>
-    <AssemblyName>ReboundEngine</AssemblyName>
+    <RootNamespace>StarEngine</RootNamespace>
+    <AssemblyName>StarEngine</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
@@ -94,6 +94,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflect\ClassIO.cs" />
     <Compile Include="Reflect\ClassProperty.cs" />
+    <Compile Include="Resonance\Forms\ButtonForm.cs" />
+    <Compile Include="Resonance\Forms\ImageForm.cs" />
     <Compile Include="Resonance\UI.cs" />
     <Compile Include="Resonance\UIForm.cs" />
     <Compile Include="Scene\GraphLight.cs" />
@@ -163,6 +165,9 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resonance\Peak\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\ReboundGame\packages\AssimpNet.3.3.2\build\AssimpNet.targets" Condition="Exists('..\ReboundGame\packages\AssimpNet.3.3.2\build\AssimpNet.targets')" />

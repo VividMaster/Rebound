@@ -84,6 +84,9 @@ namespace StarEngine.Draw
             // GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             QFX.Release();
 
+            GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.DepthTest);
+
           //  WhiteTex.Release(0);
 
         }
@@ -292,7 +295,7 @@ namespace StarEngine.Draw
         }
         public static void Rect(int x,int y,int w,int h,VTex2D img,Vector4 tc,Vector4 bc)
         {
-            Bind();
+             Bind();
             GenQuad(x, y, w, h, tc, bc);
             img.Bind(0);
             DrawQuad();

@@ -32,7 +32,7 @@ namespace ReboundGame
 
         public override void InitApp()
         {
-
+            AssImpImport.IPath = "Data\\3DTextures\\";
         }
         public override void DrawApp()
         {
