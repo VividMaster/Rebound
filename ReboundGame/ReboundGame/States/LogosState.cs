@@ -32,12 +32,16 @@ namespace ReboundGame.States
         public int LS = 0;
         public float LogoAlpha = 0.0f;
         public StarEngine.Texture.VTex2D LogoTex = null;
-
+        public StarEngine.Texture.VTex2D PresTex = null;
+        public StarEngine.Texture.VTex2D GameTex = null;
         public override void InitState()
         {
             Console.WriteLine("Loading logo tex.");
             LogoTex = new StarEngine.Texture.VTex2D("Data\\2D\\Logo\\DarkArtLogo.png", LoadMethod.Single);
+            PresTex = new VTex2D("Data\\2D\\Logo\\Presents.png", LoadMethod.Single);
+            GameTex = new VTex2D("Data\\2D\\Logo\\ArenaLogo.png", LoadMethod.Single);
             Console.WriteLine("Loaded.");
+
             VPen.SetProj(0, 0, StarApp.W, StarApp.H);
 
             bool AlphaUp()
@@ -82,12 +86,42 @@ namespace ReboundGame.States
 
             }
 
-            Cause.Do(TestDo);
+            void DoPresent()
+            {
+                LogoAlpha = 0.0f;
+                PresentLogo = true;
+          
 
-            Cause.Flow(null,AlphaUp);
-            Cause.Flow(WaitInit, WaitABit);
-            Cause.Flow(null, AlphaDown);
+            }
 
+            void DoGame(){
+
+                LogoAlpha = 0.0f;
+                GameLogo = true;
+            
+
+            }
+
+            void DoMenu()
+            {
+
+                ToMenu = true;
+                LogoAlpha = 0.0f;
+              
+
+            }
+
+            Logics.Do(TestDo);
+
+            Logics.Flow(null,AlphaUp);
+            Logics.Flow(WaitInit, WaitABit);
+            Logics.Flow(null, AlphaDown,DoPresent);
+            Logics.Flow(null, AlphaUp);
+            Logics.Flow(WaitInit, WaitABit);
+            Logics.Flow(null, AlphaDown, DoGame);
+            Logics.Flow(null, AlphaUp);
+            Logics.Flow(WaitInit, WaitABit);
+            Logics.Flow(null, AlphaDown, DoMenu);
             var ms = StarSoundSys.Play2DFile("Data\\Music\\Logo\\LogoTheme1.wav");
 
             bool StateDone()
@@ -98,7 +132,7 @@ namespace ReboundGame.States
             void NextState()
             {
                 ms.Stop();
-                Console.WriteLine("NextState");
+                PresentLogo = true;
             }
 
             bool UnlessMusic()
@@ -106,11 +140,14 @@ namespace ReboundGame.States
                 return ms.Playing;
             }
 
-            Cause.When(StateDone, NextState,UnlessMusic);
+            Logics.When(StateDone, NextState,UnlessMusic);
 
 
         }
-
+        bool ReboundLogo = false;
+        private bool PresentLogo = false;
+        bool GameLogo = false;
+        bool ToMenu = false;
         public override void UpdateState()
         {
             return;
@@ -163,7 +200,72 @@ namespace ReboundGame.States
         public override void DrawState()
         {
 
-            VPen.Rect(0, 0, StarApp.W, StarApp.H, LogoTex, new OpenTK.Vector4(LogoAlpha, LogoAlpha, LogoAlpha, LogoAlpha));
+            bool RenderDarkLogo()
+            {
+                VPen.Rect(0, 0, StarApp.W, StarApp.H, LogoTex, new OpenTK.Vector4(LogoAlpha, LogoAlpha, LogoAlpha, LogoAlpha));
+                return PresentLogo;
+            }
+
+            bool RenderPresLogo()
+            {
+                VPen.Rect(0, 0, StarApp.W, StarApp.H, this.PresTex, new OpenTK.Vector4(LogoAlpha, LogoAlpha, LogoAlpha, LogoAlpha));
+                return GameLogo;
+            }
+
+            bool RenderGameLogo()
+            {
+                //Console.WriteLine("Rendering!"); 
+
+                VPen.Rect(0, 0, StarApp.W, StarApp.H, GameTex, new OpenTK.Vector4(LogoAlpha, LogoAlpha, LogoAlpha, LogoAlpha));
+                return ToMenu;
+            }
+
+            Graphics.Flow(null, RenderDarkLogo);
+            Graphics.Flow(null, RenderPresLogo);
+            Graphics.Flow(null, RenderGameLogo);
+
+            Graphics.SmartUpdate();
+
+            return;
+
+            void DarkLogo()
+            {
+                VPen.Rect(0, 0, StarApp.W, StarApp.H, LogoTex, new OpenTK.Vector4(LogoAlpha, LogoAlpha, LogoAlpha, LogoAlpha));
+            }
+
+            bool DarkLogoUntil()
+            {
+
+              
+
+                return PresentLogo;
+
+            }
+
+
+            void PresLogo()
+            {
+                VPen.Rect(0, 0, StarApp.W, StarApp.H, LogoTex, new OpenTK.Vector4(LogoAlpha, LogoAlpha, LogoAlpha, LogoAlpha));
+            }
+
+
+            bool PresentLogoUntil(){
+
+                return ReboundLogo;
+
+            }
+
+            void DoPresent()
+            {
+
+                Graphics.Do(PresLogo, PresentLogoUntil);
+
+            }
+
+            Graphics.Do(DarkLogo, DarkLogoUntil,DoPresent);
+
+            Graphics.InternalUpdate();
+
 
         }
     

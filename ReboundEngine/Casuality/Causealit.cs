@@ -16,13 +16,18 @@ namespace StarEngine.Logic
     public class Logics
     {
         public int inter;
+        public bool Threaded = false;
         public Thread UpdateThread = null;
-        public Logics(int interval = 1000 / 60)
+        public Logics(int interval = 1000 / 60,bool threaded = false)
         {
             inter = interval;
-            UpdateThread = new Thread(new ThreadStart(Thread_Update));
-            UpdateThread.Priority = ThreadPriority.Normal;
-            UpdateThread.Start();
+            if (threaded)
+            {
+                Threaded = true;
+                UpdateThread = new Thread(new ThreadStart(Thread_Update));
+                UpdateThread.Priority = ThreadPriority.Normal;
+                 UpdateThread.Start();
+            }
         }
         public Mutex upmut = new Mutex();
 
@@ -70,7 +75,7 @@ namespace StarEngine.Logic
             ai.Once = once;
             Acts.Add(ai);
         }
-        public void Flow(FlowInit init, FlowLogic logic, FlowLogic endLogic = null)
+        public void Flow(FlowInit init, FlowLogic logic, Act endLogic = null)
         {
             var flow = new FlowInfo();
             flow.Init = init;
@@ -78,8 +83,20 @@ namespace StarEngine.Logic
             flow.EndLogic = endLogic;
             Flows.Add(flow);
         }
+        public void SmartUpdate()
+        {
+            if (Threaded)
+            {
+
+            }
+            else
+            {
+                InternalUpdate();
+            }
+        }
         public void InternalUpdate()
         {
+
             upmut.WaitOne();
             var iil = new List<IfInfo>();
             foreach(var ci in Ifs)
@@ -109,6 +126,7 @@ namespace StarEngine.Logic
                 Ifs.Remove(ci);
             }
             var rd = new List<DoInfo>();
+            var dt = new List<DoInfo>();
             foreach (var Do in Dos)
             {
                 Do.Do();
@@ -116,9 +134,14 @@ namespace StarEngine.Logic
                 {
                     if (Do.Until())
                     {
+                        if (Do.Then != null) dt.Add(Do);
                         rd.Add(Do);
                     }
                 }
+            }
+            foreach(var dd in dt)
+            {
+                dd.Then();
             }
             foreach (var Do in rd)
             {
@@ -241,11 +264,12 @@ namespace StarEngine.Logic
             wi.Unless = unless;
             Whens.Add(wi);
         }
-        public void Do(Act action, Until until = null)
-        {
+        public void Do(Act action, Until until = null,Act then=null) {
+        
             var di = new DoInfo();
             di.Do = action;
             di.Until = until;
+                di.Then = then;
             Dos.Add(di);
         }
         public void If(If ifact, Act action, Act Else = null, Until until = null)
@@ -276,13 +300,14 @@ namespace StarEngine.Logic
     {
         public FlowInit Init;
         public FlowLogic Logic;
-        public FlowLogic EndLogic = null;
+        public Act EndLogic = null;
         public bool Begun = false;
     }
     public class DoInfo
     {
         public Act Do = null;
         public Until Until = null;
+        public Act Then = null;
     }
     public class ActInfo
     {

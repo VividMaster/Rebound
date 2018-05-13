@@ -10,7 +10,8 @@ namespace StarEngine.State
     public class StarState
     {
 
-        public Logic.Logics Cause = new Logics();
+        public Logic.Logics Logics = new Logics(1000 / 60, true);
+        public Logic.Logics Graphics = new Logics(1000 / 60, false);
 
         public string Name
         {
@@ -62,7 +63,9 @@ namespace StarEngine.State
 
         public void InternalUpdate()
         {
-          //  Cause.InternalUpdate();
+            //  Cause.InternalUpdate();
+            //Graphics.SmartUpdate();
+
         }
 
 
