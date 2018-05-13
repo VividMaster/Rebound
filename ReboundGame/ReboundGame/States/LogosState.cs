@@ -42,7 +42,7 @@ namespace ReboundGame.States
 
             bool AlphaUp()
             {
-                LogoAlpha = LogoAlpha + 0.03f;
+                LogoAlpha = LogoAlpha + 0.015f;
                 if (LogoAlpha > 1.0f) return true;
                 return false;
             }
@@ -67,7 +67,7 @@ namespace ReboundGame.States
         
             bool AlphaDown()
             {
-                LogoAlpha -= 0.02f;
+                LogoAlpha -= 0.01f;
                 if (LogoAlpha < 0.0f)
                 {
                     logoDone = true;

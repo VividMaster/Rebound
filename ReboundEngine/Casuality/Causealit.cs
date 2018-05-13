@@ -12,11 +12,12 @@ namespace StarEngine.Logic
     public delegate bool FlowLogic();
     public delegate bool When();
     public delegate bool Unless();
+    public delegate bool If();
     public class Logics
     {
         public int inter;
         public Thread UpdateThread = null;
-        public Logics(int interval = 1000/60)
+        public Logics(int interval = 1000 / 60)
         {
             inter = interval;
             UpdateThread = new Thread(new ThreadStart(Thread_Update));
@@ -34,7 +35,7 @@ namespace StarEngine.Logic
                 int ct = Environment.TickCount;
                 if (ct >= next)
                 {
-                    
+
                     InternalUpdate();
                     next = ct + inter;
                 }
@@ -80,8 +81,35 @@ namespace StarEngine.Logic
         public void InternalUpdate()
         {
             upmut.WaitOne();
+            var iil = new List<IfInfo>();
+            foreach(var ci in Ifs)
+            {
+                if (ci.If())
+                {
+                    
+                    ci.Action();
+                }
+                else
+                {
+                    if (ci.Else != null)
+                    {
+                        ci.Else();
+                    }
+                }
+                if (ci.Until != null)
+                {
+                    if (ci.Until())
+                    {
+                        iil.Add(ci);
+                    }
+                }
+            }
+            foreach(var ci in iil)
+            {
+                Ifs.Remove(ci);
+            }
             var rd = new List<DoInfo>();
-            foreach(var Do in Dos)
+            foreach (var Do in Dos)
             {
                 Do.Do();
                 if (Do.Until != null)
@@ -92,7 +120,7 @@ namespace StarEngine.Logic
                     }
                 }
             }
-            foreach(var Do in rd)
+            foreach (var Do in rd)
             {
                 Dos.Remove(Do);
             }
@@ -213,19 +241,37 @@ namespace StarEngine.Logic
             wi.Unless = unless;
             Whens.Add(wi);
         }
-        public void Do(Act action,Until until=null)
+        public void Do(Act action, Until until = null)
         {
             var di = new DoInfo();
             di.Do = action;
             di.Until = until;
             Dos.Add(di);
         }
+        public void If(If ifact, Act action, Act Else = null, Until until = null)
+        {
+            var ni = new IfInfo();
+            ni.If = ifact;
+
+            ni.Else = Else;
+            ni.Action = action;
+            ni.Until = until;
+            Ifs.Add(ni);
+        }
+        public List<IfInfo> Ifs = new List<IfInfo>();
         public List<DoInfo> Dos = new List<DoInfo>();
         public List<FlowInfo> Flows = new List<FlowInfo>();
         private List<ActInfo> Acts = new List<ActInfo>();
         public List<WhenInfo> Whens = new List<WhenInfo>();
     }
 
+    public class IfInfo
+    {
+        public If If = null;
+        public Act Else = null;
+        public Act Action = null;
+        public Until Until = null;
+    }
     public class FlowInfo
     {
         public FlowInit Init;
