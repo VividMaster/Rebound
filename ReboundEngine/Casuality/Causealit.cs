@@ -258,6 +258,14 @@ namespace StarEngine.Logic
         }
         public void When(When when, Act action, Unless unless = null)
         {
+            foreach(var cw in Whens)
+            {
+              if(cw.When == when && cw.Action == action && cw.Unless == unless)
+                {
+                    return;
+                }
+
+            }
             WhenInfo wi = new WhenInfo();
             wi.When = when;
             wi.Action = action;

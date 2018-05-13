@@ -94,6 +94,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflect\ClassIO.cs" />
     <Compile Include="Reflect\ClassProperty.cs" />
+    <Compile Include="Resonance\UI.cs" />
+    <Compile Include="Resonance\UIForm.cs" />
     <Compile Include="Scene\GraphLight.cs" />
     <Compile Include="Scene\GraphNode.cs" />
     <Compile Include="Scene\GraphSprite.cs" />

@@ -52,6 +52,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReboundApp.cs" />
     <Compile Include="States\LogosState.cs" />
+    <Compile Include="States\MainMenuState.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -21,6 +21,27 @@ namespace StarEngine.Input
         public static int MDX=0, MDY=0, MDZ=0;
         public static bool[] MB = new bool[32];
         public static Dictionary<Key, bool> Keys = new Dictionary<OpenTK.Input.Key, bool>();
+        public static void SetKey(Key key,bool i)
+        {
+            if (i)
+            {
+                if (Keys.ContainsKey(key))
+                {
+
+                }
+                else
+                {
+                    Keys.Add(key, true);
+                }
+            }
+            else
+            {
+                if (Keys.ContainsKey(key))
+                {
+                    Keys.Remove(key);
+                }
+            }
+        }
         public static bool KeyIn(Key k)
         {
             if (Keys.ContainsKey(k)) return true;

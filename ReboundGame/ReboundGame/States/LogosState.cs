@@ -34,6 +34,7 @@ namespace ReboundGame.States
         public StarEngine.Texture.VTex2D LogoTex = null;
         public StarEngine.Texture.VTex2D PresTex = null;
         public StarEngine.Texture.VTex2D GameTex = null;
+        public StarEngine.Sound.VSound ms;
         public override void InitState()
         {
             Console.WriteLine("Loading logo tex.");
@@ -42,6 +43,8 @@ namespace ReboundGame.States
             GameTex = new VTex2D("Data\\2D\\Logo\\ArenaLogo.png", LoadMethod.Single);
             Console.WriteLine("Loaded.");
 
+            ms = StarSoundSys.Play2DFile("Data\\Music\\Logo\\LogoTheme1.wav");
+            
             VPen.SetProj(0, 0, StarApp.W, StarApp.H);
 
             bool AlphaUp()
@@ -102,17 +105,13 @@ namespace ReboundGame.States
 
             }
 
-            void DoMenu()
+           
+          void Done()
             {
-
+                ms.Stop();
                 ToMenu = true;
-                LogoAlpha = 0.0f;
-              
-
             }
-
-            Logics.Do(TestDo);
-
+        
             Logics.Flow(null,AlphaUp);
             Logics.Flow(WaitInit, WaitABit);
             Logics.Flow(null, AlphaDown,DoPresent);
@@ -121,8 +120,8 @@ namespace ReboundGame.States
             Logics.Flow(null, AlphaDown, DoGame);
             Logics.Flow(null, AlphaUp);
             Logics.Flow(WaitInit, WaitABit);
-            Logics.Flow(null, AlphaDown, DoMenu);
-            var ms = StarSoundSys.Play2DFile("Data\\Music\\Logo\\LogoTheme1.wav");
+            Logics.Flow(null, AlphaDown, Done);
+  
 
             bool StateDone()
             {
@@ -220,6 +219,37 @@ namespace ReboundGame.States
                 return ToMenu;
             }
 
+            void DoMenu()
+            {
+
+          
+                LogoAlpha = 0.0f;
+                ms.Stop();
+
+                StarApp.PushState(new MainMenuState());
+
+
+            }
+
+
+            bool CheckInput()
+            {
+                if (ToMenu) return true;
+                if (VInput.MB[0])
+                {
+                    return true;
+                }
+                if (VInput.KeyIn(OpenTK.Input.Key.Enter) || VInput.KeyIn(OpenTK.Input.Key.Space))
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            //Logics.Do(TestDo);
+
+            Graphics.When(CheckInput, DoMenu, null);
+
             Graphics.Flow(null, RenderDarkLogo);
             Graphics.Flow(null, RenderPresLogo);
             Graphics.Flow(null, RenderGameLogo);
@@ -261,6 +291,9 @@ namespace ReboundGame.States
                 Graphics.Do(PresLogo, PresentLogoUntil);
 
             }
+
+
+
 
             Graphics.Do(DarkLogo, DarkLogoUntil,DoPresent);
 

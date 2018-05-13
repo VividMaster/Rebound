@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using StarEngine.Input;
 namespace StarEngine.UI.UIWidgets
 {
+    public delegate void Dragged(int dx,int dy);
     public class UIDragZone : UIWidget
     {
         public bool dragging = false;
         int lx, ly;
         public int DraggedX, DraggedY;
+        public Dragged DragEv = null;
         public UIDragZone(int x,int y,int w,int h,UIWidget top) : base(x,y,w,h,"",top)
         {
 
@@ -22,6 +24,10 @@ namespace StarEngine.UI.UIWidgets
             dragging = true;
             lx = VInput.MX;
             ly = VInput.MY;
+            if (DragEv != null)
+            {
+                Console.WriteLine("Yep");
+            }
         }
         public override void OnMouseUp(UIMouseButton b)
         {
@@ -31,10 +37,15 @@ namespace StarEngine.UI.UIWidgets
         {
             if (dragging)
             {
+             //   Console.WriteLine("Dragging!");
                 DraggedX = VInput.MX - lx;
                 DraggedY = VInput.MY - ly;
                 lx = VInput.MX;
                 ly = VInput.MY;
+                if (DragEv != null)
+                {
+                    DragEv(DraggedX, DraggedY);
+                }
             }
             else
             {

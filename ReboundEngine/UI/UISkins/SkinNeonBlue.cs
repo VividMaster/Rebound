@@ -29,20 +29,21 @@ namespace StarEngine.UI.UISkins
         }
         public override void InitSkin()
         {
-            PanelBG = new VTex2D("data/ui/skin/neonblue/panelbg1.jpg", LoadMethod.Multi);
-            But_Norm = new VTex2D("data/ui/skin/neonblue/but_normal.png", LoadMethod.Multi);
+            Console.WriteLine("Skin!");
+            PanelBG = new VTex2D("data/ui/skin/neonblue/panelbg1.png", LoadMethod.Single);
+            But_Norm = new VTex2D("data/ui/skin/neonblue/but_normal.png", LoadMethod.Single);
             But_Hover = But_Norm;
             But_Press = But_Norm;
             SmallFont = new VFont("data/font/times.ttf.vf");
             BigFont = new VFont("data/font/f2.ttf.vf");
-            WinBord = new VTex2D("data/ui/skin/neonblue/winbord.png", LoadMethod.Multi);
-            WinCon = new VTex2D("data/ui/skin/neonblue/wincon.jpg", LoadMethod.Multi);
-            WinTitle = new VTex2D("data/ui/skin/neonblue/wintitle.png", LoadMethod.Multi);
+            WinBord = new VTex2D("data/ui/skin/neonblue/winbord.png", LoadMethod.Single);
+            WinCon = new VTex2D("data/ui/skin/neonblue/wincon.png", LoadMethod.Single);
+            WinTitle = new VTex2D("data/ui/skin/neonblue/wintitle.png", LoadMethod.Single);
             WinBackCol.W = 0.5f;
             Click = new Sound.VSoundSource("data/ui/skin/neonblue/click.wav");
             Type = new Sound.VSoundSource("data/ui/skin/neonblue/type.wav");
             EOE = new Sound.VSoundSource("data/ui/skin/neonblue/eoe.wav");
-            WinBackCol = new Vector4(0.4f, 0.1f, 0.1f, 0.8f);
+            WinBackCol = new Vector4(0.9f, 0.9f, 0.9f, 0.9f);
         }
         public override void DrawButton(UIButton b)
         {
@@ -64,11 +65,12 @@ namespace StarEngine.UI.UISkins
                     col.W = col.W * UISys.AlphaMod;
                     break;
             }
+            VPen.BlendMod = VBlend.Alpha;
             VPen.Rect((int)b.WidX, (int)b.WidY, (int)b.WidW, (int)b.WidH, bi, col);
             VFontRenderer.Draw(SmallFont, b.Name, (int)(b.WidX + b.WidW / 2 - (fw / 2)),(int)( b.WidY + (b.WidH) / 2 - (fh / 2)),new Vector4(1,1,1,UISys.AlphaMod));
             if(b==UISys.Active)
             {
-                VPen.Line(b.WidX, b.WidY + 4, b.WidX + b.WidW, b.WidY + 4, new Vector4(1, 1, 1, 1));
+             //   VPen.Line(b.WidX, b.WidY + 4, b.WidX + b.WidW, b.WidY + 4, new Vector4(1, 1, 1, 1));
             }
         }
         public override void DrawPanel(UIPanel p)

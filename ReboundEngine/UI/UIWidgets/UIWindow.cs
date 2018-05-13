@@ -26,6 +26,12 @@ namespace StarEngine.UI.UIWidgets
             sizeDrag = new UIDragZone((int)WidW - 15, (int)WidH - 15, 15, 15, this);
             botDrag = new UIDragZone(0, (int)WidH - 10, (int)WidW-15, 10, this);
             rightDrag = new UIDragZone((int)WidW - 10, UISys.Skin().TitleHeight + 1, 10, (int)WidH - 15 - UISys.Skin().TitleHeight, this);
+            void RightDrag(int dx,int dy)
+            {
+                Resize(dx, 0);
+            }
+            rightDrag.DragEv = RightDrag;
+
             leftDrag = new UIDragZone(0, UISys.Skin().TitleHeight + 1, 10, (int)WidH - UISys.Skin().TitleHeight - 2, this);
         
             EnableScissorTest = true;
@@ -110,7 +116,7 @@ namespace StarEngine.UI.UIWidgets
 
             if (SizeLocked == false)
             {
-               
+             //   Console.WriteLine("Drag:" + rightDrag.DraggedX);
                     Resize(sizeDrag.DraggedX, sizeDrag.DraggedY);
                     Resize(rightDrag.DraggedX, 0);
                     Resize(0, botDrag.DraggedY);

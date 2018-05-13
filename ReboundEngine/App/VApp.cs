@@ -146,6 +146,7 @@ namespace StarEngine.App
         {
             int bid = 0;
             bid = GetBID(e);
+            VInput.MB[bid] = true;
          
         }
 
@@ -171,18 +172,34 @@ namespace StarEngine.App
         protected override void OnMouseUp(MouseButtonEventArgs e)
         {
             int bid = GetBID(e);
+            VInput.MB[bid] = false;
         }
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
+            if (fs) { lm = e.Mouse;
+                fs = false;
+            }
+            var ms = e.Mouse;
+
+            if (lm != ms)
+            {
+                VInput.MX = ms.X;
+                VInput.MY = ms.Y;
+                VInput.MDX = ms.X - lm.X;
+                VInput.MDY = ms.Y - lm.Y;
+            }
+            lm = ms;
 
         }
+        bool fs = true;
+        MouseState lm;
         protected override void OnKeyDown(KeyboardKeyEventArgs e)
         {
-    
+            VInput.SetKey(e.Key, true);
         }
         protected override void OnKeyUp(KeyboardKeyEventArgs e)
         {
-        
+            VInput.SetKey(e.Key, false);
         }
         protected override void OnResize(EventArgs e)
         {

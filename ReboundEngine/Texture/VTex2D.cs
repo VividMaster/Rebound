@@ -59,6 +59,7 @@ namespace StarEngine.Texture
             {
                 return;
             }
+            if (File.Exists(p)) return;
             FileStream fs = new FileStream(p, FileMode.Create, FileAccess.Write);
             BinaryWriter w = new BinaryWriter(fs);
           
@@ -131,85 +132,155 @@ namespace StarEngine.Texture
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
             GL.PixelStore(PixelStoreParameter.PackAlignment, 4 * 4);
             pixs = dat;
+
         }
-        public VTex2D(string path,LoadMethod lm)
+        public string Name
         {
-            GL.ActiveTexture(TextureUnit.Texture0);
-            Path = path;
-          
-            if (lm==LoadMethod.Single)
+            get;
+            set;
+        }
+        public string Path
+        {
+            get;
+            set;
+        }
+        public byte[] RawData;
+        public static byte[] TmpStore = null;
+      
+        public static Dictionary<string, VTex2D> Lut = new Dictionary<string, VTex2D>();
+
+        public VTex2D(string path,LoadMethod lm,bool alpha = true)
+        {
+
+            if (File.Exists(path) == false)
             {
-                // Check if FreeImage.dll is available (can be in %path%).
-                bool sl = false;
-                if(File.Exists(Path+".vtex"))
-                {
-                    FileStream fs = new FileStream(Path + ".vtex", FileMode.Open, FileAccess.Read);
-                    BinaryReader r = new BinaryReader(fs);
-
-                    SkipBitmap(r);
-                    ReadBitmap(r);
-                    r.Close();
-                    sl = true;
-                }
-
-                if (sl == false)
-                {
-                    if (File.Exists(path) == false)
-                    {
-                        return;
-                    }
-
-
-                   
-                        TexData = new Bitmap(path);
-                    W = TexData.Width;
-                    H = TexData.Height;
-
-                }
-
-
-                //TexData = new Bitmap(path);
-            
-                D = 1;
-                Loaded = true;
-                Alpha = true;
-                //SetPix();
-                BindData();
-                if (sl == false)
-                {
-                    SaveTex(path + ".vtex");
-                }
-            } else
-            {
-                bool sl = false;
-                if (File.Exists(Path + ".vtex"))
-                {
-                    
-                    sl = true;
-                }
-
-                if (sl == false)
-                {
-                    LoadThread = new Thread(new ThreadStart(T_LoadTex));
-                    LoadThread.Start();
-                }
-                else
-                {
-                    FileStream fs = new FileStream(Path + ".vtex", FileMode.Open, FileAccess.Read);
-                    BinaryReader r = new BinaryReader(fs);
-                    ReadBitmap(r);
-                    D = 1;
-                    PreLoaded = true;
-                    Alpha = true;
-                  //  SetPix();
-                    BindData();
-                    nf = fs;
-                    nr = r;
-
-                    LoadThread = new Thread(new ThreadStart(T_LoadVTex));
-                    LoadThread.Start();
-                }
+                return;
             }
+            if (path == string.Empty || path == "" || path == null)
+            {
+                return;
+            }
+            Path = path;
+
+            if (Lut.ContainsKey(path))
+            {
+
+                var ot = Lut[path];
+                ID = ot.ID;
+                W = ot.W;
+                H = ot.H;
+                Path = ot.Path;
+                Alpha = ot.Alpha;
+                Name = ot.Name;
+                return;
+            }
+            else
+            {
+                Lut.Add(path, this);
+            }
+
+
+
+            Console.WriteLine("Reading:" + path);
+
+
+
+            GL.Enable(EnableCap.Texture2D);
+            ID = GL.GenTexture();
+
+            GL.BindTexture(TextureTarget.Texture2D, ID);
+
+            if (new FileInfo(path + ".cache").Exists)
+            {
+                FileStream fs = new FileStream(path + ".cache", FileMode.Open, FileAccess.Read);
+                BinaryReader r = new BinaryReader(fs);
+                Name = r.ReadString();
+                Path = r.ReadString();
+                W = r.ReadInt16();
+                H = r.ReadInt16();
+                Alpha = r.ReadBoolean();
+                int pc = 3;
+                if (Alpha) pc = 4;
+
+                RawData = new byte[W * H * pc];
+
+                r.Read(RawData, 0, W * H * pc);
+
+                fs.Close();
+                fs = null;
+
+            }
+            else
+            {
+
+                Bitmap img = new Bitmap(path);
+                //System.Drawing.Imaging.BitmapData dat = img.LockBits( new Rectangle(0, 0, img.Width, img.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.);
+
+                W = img.Width;
+                H = img.Height;
+                Alpha = alpha;
+
+                int pc = 3;
+                if (Alpha) pc = 4;
+
+                RawData = new byte[W * H * pc];
+
+                //GL.TexImage2D(TextureTarget.Texture2D,0,PixelInternalFormat.)
+
+
+
+                int pi = 0;
+                for (int y = 0; y < img.Height; y++)
+                {
+                    for (int x = 0; x < img.Width; x++)
+                    {
+                        var pix = img.GetPixel(x, y);
+                        RawData[pi++] = pix.R;
+                        RawData[pi++] = pix.G;
+                        RawData[pi++] = pix.B;
+                        if (alpha)
+                        {
+                            RawData[pi++] = pix.A;
+                        }
+
+                    }
+                }
+
+                FileStream fs = new FileStream(path + ".cache", FileMode.Create, FileAccess.Write);
+                BinaryWriter w = new BinaryWriter(fs);
+                if (Name == null || Name == string.Empty)
+                {
+                    Name = "Tex2D";
+                }
+                w.Write(Name);
+                w.Write(Path);
+                w.Write((short)W);
+                w.Write((short)H);
+                w.Write(Alpha);
+                pc = 3;
+                if (alpha) pc = 4;
+                w.Write(RawData, 0, W * H * pc);
+                fs.Flush();
+                fs.Close();
+                fs = null;
+            }
+
+            if (alpha)
+            {
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, W, H, 0, PixelFormat.Rgba, PixelType.UnsignedByte, RawData);
+            }
+            else
+            {
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb, W, H, 0, PixelFormat.Rgb, PixelType.UnsignedByte, RawData);
+            }
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToEdge);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+
+            GL.BindTexture(TextureTarget.Texture2D, 0);
         }
         bool PreLoaded = false;
         FileStream nf;
