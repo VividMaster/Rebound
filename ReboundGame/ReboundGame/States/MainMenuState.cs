@@ -75,22 +75,24 @@ namespace ReboundGame.States
             ppRen.Scene = scene3d;
 
             Console.WriteLine("Importing mesh.");
-            ent1 = Import.ImportNode("Data\\3D\\Logo\\Menu\\Wall1.3ds");
+            ent1 = Import.ImportNode("Data\\3D\\Logo\\Menu\\Rebound1.3ds");
             Console.WriteLine("Set up.");
-            //var mat1 = new Material3D();
+            var mat1 = new Material3D();
             //Console.WriteLine("Loading texture.");
-            //mat1.TCol = new Tex2D("Data\\3D\\brick_2.png");
-            //mat1.TNorm = new Tex2D("Data\\3D\\brick_2_NRM.png");
+            mat1.TCol = new Tex2D("Data\\3D\\brick_2.png");
+            mat1.TNorm = new Tex2D("Data\\3D\\brick_2_NRM.png");
             Console.WriteLine("Loaded.");
+
 
             var ge = ent1 as GraphEntity3D;
 
-            //ge.SetMat(mat1);
+            ge.SetMat(mat1);
             cam1 = new GraphCam3D();
-            cam1.LocalPos = new OpenTK.Vector3(0, 25, 150);
+            cam1.LocalPos = new OpenTK.Vector3(0, 80, 450);
 
 
-            //cam1.LookAt(ent1);
+            cam1.LookAt(ent1);
+
 
 
 
@@ -98,29 +100,30 @@ namespace ReboundGame.States
             var l2 = new StarEngine.Lighting.GraphLight3D();
             var l3 = new StarEngine.Lighting.GraphLight3D();
 
-            l3.LocalPos = new OpenTK.Vector3(20, 40, 5);
+            l3.LocalPos = new OpenTK.Vector3(300, 80, 450);
             l3.Diff = new OpenTK.Vector3(0, 1, 2);
 
-            l2.LocalPos = new OpenTK.Vector3(5, 25, 20);
-            l2.Diff = new OpenTK.Vector3(1, 2, 1);
+            l2.LocalPos = new OpenTK.Vector3(5, 200, 500);
+            l2.Diff = new OpenTK.Vector3(2, 2, 1);
 
 
-            light1.LocalPos = new OpenTK.Vector3(0, 40, 150);
+            light1.LocalPos = new OpenTK.Vector3(0, 80, 350);
 
-            ent1.Rot(new OpenTK.Vector3(0, 45, 0), Space.Local);
+          //  ent1.Rot(new OpenTK.Vector3(0, 45, 0), Space.Local);
 
 
 
             scene3d.Add(ent1);
 
-  //          scene3d.Add(l2);
+           scene3d.Add(l2);
 
-//            scene3d.Add(l3);
+            scene3d.Add(l3);
+
             scene3d.Add(light1);
 
             scene3d.Add(cam1);
 
-            light1.Diff = new OpenTK.Vector3(1, 1, 1);
+            light1.Diff = new OpenTK.Vector3(3, 3, 3);
 
 
         }
@@ -131,9 +134,52 @@ namespace ReboundGame.States
             UI.Update();
 
         }
-
+        public bool firstd = true;
+        public int lx, ly;
         public override void DrawState()
         {
+
+            int move = 8;
+            if (VInput.KeyIn(OpenTK.Input.Key.ShiftLeft))
+            {
+                move = 12;
+            }
+            if (VInput.KeyIn(OpenTK.Input.Key.W))
+            {
+
+                cam1.Move(new OpenTK.Vector3(0, 0, -move), Space.Local);
+
+            }
+            if (VInput.KeyIn(OpenTK.Input.Key.A))
+            {
+                cam1.Move(new OpenTK.Vector3(-move, 0, 0), Space.Local);
+            }
+
+            if (VInput.KeyIn(OpenTK.Input.Key.D))
+            {
+                cam1.Move(new OpenTK.Vector3(move, 0, 0), Space.Local);
+            }
+
+            if (VInput.KeyIn(OpenTK.Input.Key.S))
+            {
+                cam1.Move(new OpenTK.Vector3(0, 0, move), Space.Local);
+            }
+            if (VInput.MB[0])
+            {
+                light1.LocalPos = cam1.LocalPos;
+            }
+            int xd, yd;
+            if (firstd)
+            {
+                lx = VInput.MX;
+                ly = VInput.MY;
+                firstd = false;
+            }
+            xd = VInput.MX - lx;
+            yd = VInput.MY - ly;
+            lx = VInput.MX;
+            ly = VInput.MY;
+            cam1.Turn(new OpenTK.Vector3(yd, xd, 0), Space.Local);
 
             scene3d.Render();
 

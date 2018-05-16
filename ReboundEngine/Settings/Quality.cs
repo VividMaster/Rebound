@@ -10,6 +10,6 @@ namespace StarEngine.Settings
     {
         public static int ShadowMapWidth = 512;
         public static int ShadowMapHeight = 512;
-        public static float ShadowDepth = 500;
+        public static float ShadowDepth = 2000;
     }
 }

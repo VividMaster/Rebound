@@ -55,7 +55,7 @@ namespace StarEngine.Scene
         public bool DepthTest = true;
         public bool AlphaTest = false;
         public bool CullFace = true;
-        public float MinZ = 1f, MaxZ = 700;
+        public float MinZ = 1f, MaxZ = 13700;
         public GraphCam3D()
         {
             Rot(new Vector3(0, 0, 0), Space.Local);
